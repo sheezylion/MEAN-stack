@@ -95,6 +95,541 @@ It is recommended to use the default settings, which are free-tier eligible.
 
 10. Once the instance is launched, you’ll see a success message. Scroll down and click on the “View all Instances” button.
 
+<img width="939" alt="Screenshot 2024-05-18 at 11 32 40" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/22551888-4d39-43b8-9914-a402b5af5df1">
+
+11. Clicking on the instance ID will take you to the EC2 Instances page, where you can see the details and manage your instances effectively.
+
+<img width="1072" alt="Screenshot 2024-05-18 at 11 34 43" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/4cc43a36-8489-436f-aee9-6866a3b7147e">
+
+This page provides comprehensive information about our instances, including status, instance type, public IP address, and other relevant details.
+
+#### Connect to Instance
+
+I will connect to this using ssh client via port 22. This is done using the following block of code:
+
+```
+ssh -i ~/Downloads/demo-pair.pem ubuntu@54.196.152.96
+```
+Where username=ubuntu and public ip address = 54.196.152.96
+
+<img width="718" alt="Screenshot 2024-05-18 at 11 38 54" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/b501bbe1-5de5-4197-8420-a5b067a72cfc">
+
+### Step 1 - Install Nodejs
+
+Node.js is a JavaScript runtime built on Chrome’s V8 JavaScript engine. Node.js is used in this tutorial to set up the Express routes and AngularJS controllers.
+
+1. Update and Upgrade ubuntu
+
+```
+sudo apt update && sudo apt upgrade -y
+```
+
+<img width="912" alt="Screenshot 2024-05-18 at 11 41 41" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/bbd90cc9-6faa-40ef-bea2-2b86beed15a2">
+
+2. Add certificates
+
+```
+sudo apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates
+```
+
+<img width="1160" alt="Screenshot 2024-05-18 at 11 43 29" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/9a1379d9-f854-43c8-a244-1a6b1bcb0b52">
+
+```
+curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+```
+<img width="988" alt="Screenshot 2024-05-18 at 11 44 40" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/db28a3cd-09a7-4ecc-bc35-f4a16a4e9f7b">
+
+3. Next we install nodeJS
+
+```
+sudo apt-get install -y nodejs
+```
+
+<img width="981" alt="Screenshot 2024-05-18 at 11 45 47" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/6b5ad9c4-b415-4203-b4ab-96d0cf731d58">
+
+### Step 2 - Install MongoDB
+MongoDB is a NOSQL that stores data in flexible JSON-like documents. For our example application we are adding book
+records to mongoDB that contains book name, ISBN number, Author and number of pages.
+
+1. Download the MongoDB public GPG key
+
+To import the MongoDB public GPG key, run the following command:
+
+```
+curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \
+   sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+   --dearmor
+```
+
+2. Create a list file for MongoDB
+Create the /etc/apt/sources.list.d/mongodb-org-7.0.list file for Ubuntu 22.04:
+
+```
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+```
+
+<img width="1678" alt="Screenshot 2024-05-18 at 11 59 25" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/f85d9741-782a-4f16-b0b6-719b0b7f4d0c">
+
+3. Reload local package database
+Issue the following command to reload the local package database:
+
+```
+sudo apt-get update
+```
+
+<img width="810" alt="Screenshot 2024-05-18 at 12 00 21" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/d9da55c0-068d-4c3b-90a7-51431f4231c1">
+
+4. Install the MongoDB packages
+You can install either the latest stable version of MongoDB or a specific version of MongoDB.
+
+```
+sudo apt-get install -y mongodb-org
+```
+
+<img width="1323" alt="Screenshot 2024-05-18 at 12 02 06" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/1274ee20-6bc1-4c6e-9327-fa293469e88c">
+
+5. Start and enable mongoDB
+
+To start the server copy the command below:
+
+```
+sudo systemctl start mongod
+```
+
+To enable the server runs copy the command below:
+
+```
+sudo systemctl enable mongod
+```
+
+To verify the server is up and running, copy the command below:
+
+```
+sudo systemctl status mongod
+```
+<img width="1518" alt="Screenshot 2024-05-18 at 12 07 15" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/1a45362c-65b1-47e5-90cf-ef49cf6c1ce1">
+
+6. Install body-parser package
+
+Body-perser package is used to process JSON files passed in requests to the server.
+
+```
+sudo npm install body-parser
+```
+<img width="614" alt="Screenshot 2024-05-18 at 12 09 11" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/9db11f0e-25d2-459f-b21a-bf757da6ecb2">
+
+7. Create a folder named books for our application and cd into the newly created folder:
+  
+```
+mkdir Books && cd Books
+```
+
+8. In the book folder initialize using npm init
+
+```
+npm init
+```
+
+<img width="853" alt="Screenshot 2024-05-18 at 12 12 55" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/71452e21-a6f7-4013-bb6e-62f281d45992">
+
+9. Add file named server.js to Books folder
+
+```
+vim server.js
+```
+Copy and paste the web server code below into the server.js file.
+
+```
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose'); 
+const path = require('path'); 
+const app = express();
+
+// To connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
+// The middleware
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// For routes
+require('./apps/routes')(app);
+
+// To start the server
+app.set('port', 3300);
+app.listen(app.get('port'), () => {
+  console.log('Server up: http://localhost:' + app.get('port'));
+});
+```
+<img width="870" alt="Screenshot 2024-05-18 at 12 17 45" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/b3d37492-0308-458b-9974-6405f64999e5">
+
+### Step 3 - Install Express and set up routes to the server
+
+ExpressJS is a flexible and minimal nodeJS web application framework which is used to provide features for web and mobile application. Hence this is why express would be used to pass information to and from our mongoDB database:
+
+1. Install express and mongoose using the command below:
+
+```
+sudo npm install express mongoose
+```
+
+<img width="547" alt="Screenshot 2024-05-18 at 12 22 49" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/20a30426-32b8-4a85-b2e7-aae261e82517">
+
+2. In Books folder, create a folder named ‘apps’ and cd into the apps folder
+
+```
+mkdir apps && cd apps
+```
+
+3. In the apps folder, create a file named routes.js
+
+```
+vim routes.js
+```
+
+Copy and paste the code below into routes.js
+
+```
+const Book = require('./models/book');
+const path = require('path');
+
+module.exports = function(app) {
+  // Get all books
+  app.get('/book', async (req, res) => {
+    try {
+      const books = await Book.find({});
+      res.json(books);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // Add a new book
+  app.post('/book', async (req, res) => {
+    try {
+      const book = new Book({
+        name: req.body.name,
+        isbn: req.body.isbn,
+        author: req.body.author,
+        pages: req.body.pages
+      });
+      const result = await book.save();
+      res.json({
+        message: "Successfully added book",
+        book: result
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // Update a book
+  app.put('/book/:isbn', async (req, res) => {
+    try {
+      const updatedBook = await Book.findOneAndUpdate(
+        { isbn: req.params.isbn },
+        req.body,
+        { new: true }
+      );
+      if (!updatedBook) {
+        return res.status(404).json({ error: 'Book not found' });
+      }
+      res.json({
+        message: "Successfully updated the book",
+        book: updatedBook
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // Delete a book
+  app.delete('/book/:isbn', async (req, res) => {
+    try {
+      const result = await Book.findOneAndRemove({ isbn: req.params.isbn });
+      if (!result) {
+        return res.status(404).json({ error: 'Book not found' });
+      }
+      res.json({
+        message: "Successfully deleted the book",
+        book: result
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // Serve static files
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+  });
+};
+```
+![Screenshot 2024-05-18 at 12 26 01](https://github.com/sheezylion/MEAN-stack/assets/142250556/35d26cff-9749-45e4-8fce-2da234ea905a)
+
+
+4. In the ‘apps’ folder, create a folder named models and cd into the models folder
+
+```
+mkdir models && cd models
+```
+
+5. In models, create a file named book.js
+
+```
+vim book.js
+```
+
+Copy and paste the code below into book.js:
+
+```
+const mongoose = require('mongoose');
+
+const bookSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  isbn: { type: String, required: true, unique: true },
+  author: { type: String, required: true },
+  pages: { type: Number, required: true }
+});
+
+module.exports = mongoose.model('Book', bookSchema);
+```
+<img width="538" alt="Screenshot 2024-05-18 at 12 29 43" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/f02b4e89-dc7a-4129-a4f9-c36aa8c9de0c">
+
+### Step 4 - Access the routes with AngularJS
+
+AngularJS provides a framework for creating dynamic views in web app;ication. In this MEAN stack documentation we use AngularJS to 
+connect our webpage with express and perform actions on our book register. 
+
+1. Change the directory back to ‘Books’ 
+
+```
+cd ../..
+```
+
+2. Create a folder named ‘public’ in the Books directory and cd inside the public folder
+
+```
+mkdir public && cd public
+```
+<img width="506" alt="Screenshot 2024-05-18 at 12 35 20" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/0cc3406a-b6ce-41fe-b27b-564d690f65d4">
+
+
+3. Add a file named script.js into public folder
+
+```
+vim script.js
+```
+
+Copy and paste the code below (controller configuration defined) into the script.js file.
+
+```
+var app = angular.module('myApp', []);
+
+app.controller('myCtrl', function($scope, $http) {
+  // Get all books
+  function getAllBooks() {
+    $http({
+      method: 'GET',
+      url: '/book'
+    }).then(function successCallback(response) {
+      $scope.books = response.data;
+    }, function errorCallback(response) {
+      console.log('Error: ' + response.data);
+    });
+  }
+
+  // Initial load of books
+  getAllBooks();
+
+  // Add a new book
+  $scope.add_book = function() {
+    var body = {
+      name: $scope.Name,
+      isbn: $scope.Isbn,
+      author: $scope.Author,
+      pages: $scope.Pages
+    };
+    $http({
+      method: 'POST',
+      url: '/book',
+      data: body
+    }).then(function successCallback(response) {
+      console.log(response.data);
+      getAllBooks();  // Refresh the book list
+      // Clear the input fields
+      $scope.Name = '';
+      $scope.Isbn = '';
+      $scope.Author = '';
+      $scope.Pages = '';
+    }, function errorCallback(response) {
+      console.log('Error: ' + response.data);
+    });
+  };
+
+  // Update a book
+  $scope.update_book = function(book) {
+    var body = {
+      name: book.name,
+      isbn: book.isbn,
+      author: book.author,
+      pages: book.pages
+    };
+    $http({
+      method: 'PUT',
+      url: '/book/' + book.isbn,
+      data: body
+    }).then(function successCallback(response) {
+      console.log(response.data);
+      getAllBooks();  // Refresh the book list
+    }, function errorCallback(response) {
+      console.log('Error: ' + response.data);
+    });
+  };
+
+  // Delete a book
+  $scope.delete_book = function(isbn) {
+    $http({
+      method: 'DELETE',
+      url: '/book/' + isbn
+    }).then(function successCallback(response) {
+      console.log(response.data);
+      getAllBooks();  // Refresh the book list
+    }, function errorCallback(response) {
+      console.log('Error: ' + response.data);
+    });
+  };
+});
+```
+
+<img width="423" alt="Screenshot 2024-05-18 at 12 36 49" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/ba7eec12-d902-4d2a-86c4-bcf83a7c5c4e">
+
+4.  In ‘public’ folder, create a file named index.html
+
+```
+vim index.html
+```
+
+Copy and paste the code below into index.html file:
+
+```
+<!DOCTYPE html>
+<html ng-app="myApp" ng-controller="myCtrl">
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+  <div>
+    <table>
+      <tr>
+        <td>Name:</td>
+        <td><input type="text" ng-model="Name"></td>
+      </tr>
+      <tr>
+        <td>Isbn:</td>
+        <td><input type="text" ng-model="Isbn"></td>
+      </tr>
+      <tr>
+        <td>Author:</td>
+        <td><input type="text" ng-model="Author"></td>
+      </tr>
+      <tr>
+        <td>Pages:</td>
+        <td><input type="number" ng-model="Pages"></td>
+      </tr>
+    </table>
+    <button ng-click="add_book()">Add</button>
+    <div ng-if="successMessage">{{ successMessage }}</div>
+    <div ng-if="errorMessage">{{ errorMessage }}</div>
+  </div>
+  <hr>
+  <div>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Isbn</th>
+        <th>Author</th>
+        <th>Page</th>
+        <th>Action</th>
+      </tr>
+      <tr ng-repeat="book in books">
+        <td>{{ book.name }}</td>
+        <td>{{ book.isbn }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.pages }}</td>
+        <td><button ng-click="del_book(book)">Delete</button></td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>
+```
+<img width="779" alt="Screenshot 2024-05-18 at 12 40 46" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/14f6b378-28e1-4558-90bc-7140e7cf128d">
+
+5. Change the directory back up to ‘Books’ 
+
+```
+cd ..
+```
+
+6. Start the server with the command below:
+
+```
+node server.js
+```
+<img width="1516" alt="Screenshot 2024-05-18 at 12 43 37" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/ba912cc2-fc62-4ed0-90a7-63f9c255fe03">
+
+This server is now up and running as seen in the screenshot above, we can connect via port 3300.
+
+Hence to view our Book app via the URL, we need to open TCP port 3300 in our AWS EC2 instance. Under the Security group we would
+edit our inbound rules and add rules, just as shown below
+
+<img width="1586" alt="Screenshot 2024-05-18 at 12 48 24" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/da8f3726-12fb-415c-8d05-2c2906595291">
+
+7. The Book Register web application can now be accessed from the internet with a browser using the Public IP address or Public DNS name.
+
+```
+http://54.196.152.96:3300/
+```
+
+<img width="1560" alt="Screenshot 2024-05-18 at 12 49 48" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/f9f30608-222c-48a3-9bb4-0cea3b34d7a8">
+
+Input details into the book application 
+
+<img width="812" alt="Screenshot 2024-05-18 at 12 53 24" src="https://github.com/sheezylion/MEAN-stack/assets/142250556/a8f00064-3dbc-4716-874a-c61a56dff12e">
+
+### Conclusion
+
+By leveraging MongoDB for our database management, Express.js for server-side routing and middleware, AngularJS for front-end development, and Node.js for scalable server-side operations, we've crafted a book application of modern web development.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
